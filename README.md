@@ -1,11 +1,5 @@
 # StratumFive - Coding Challenge
 
-## Steps to run the program
-1) The program is written in Java.
-2) The program expects a ship.txt file to be in the same folder as the project.
-3) To compile the program type javac Text.java
-4) To run the program type java Text
-
 ## Introduction
 Welcome to the StratumFive Coding Challenge. Please take ten minutes to carefully read through this document before starting the challenge.
 * We expect you to spend in the region of a few hours on this challenge. If you do not complete it then please still submit your work.
