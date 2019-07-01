@@ -1,48 +1,48 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
-public class Ship {
+public class Text {
 	
 	// class members
 	
-	  static int grid[][]; //the grid for tracking the ship
-	  static int G[][][]; //grid for tracking the "move-off" points
-	  int dir=0; //direction
-	  static int t=0;
-	  static int x=0;
-	  static int y=0;
-	  static String ship_instruction=" "; //current position of the ship
-	  char orientation='\0'; //current orientation of the ship
-	  static char instruction[];
-	  static int len;
-	  int posx=0; //position of the ship
-      int posy=0;  //position of the ship
-	  static int tempx=0; // temporary variable to check if the ship falls outside the grid
-	  static int tempy=0;  // temporary variable to check if the ship falls outside the grid
-	  static int blocked_x=-1; // for marking the cell from which the ship is lost once
-	  static int blocked_y=-1;
-	  static int blocked_dir=-1;
-	  static char pre_ori='\0';
-	  static int pre_dir=0;
-	  
-	
-		  public Ship(int d,int x,int y,char o)
+		  static int grid[][]; //the grid for tracking the ship
+		  static int G[][][]; //grid for tracking the "move-off" points
+		  int dir=0; //direction
+		  static int t=0;
+		  static int x=0;
+		  static int y=0;
+		  static String ship_instruction=" "; //current position of the ship
+		  char orientation='\0'; //current orientation of the ship
+		  static char instruction[];
+		  static int len;
+		  int posx=0; //position of the ship
+	      int posy=0;  //position of the ship
+		  static int tempx=0; // temporary variable to check if the ship falls outside the grid
+		  static int tempy=0;  // temporary variable to check if the ship falls outside the grid
+		  
+		 
+		  public Text(int d,int x,int y,char o)
 		  {
 		  	posx=x;
 		  	posy=y;
 		  	dir=d;
 		  	orientation=o;	
 		  }
-		  public Ship(char o,int d)
+		  
+		  public Text(char o,int d)
 		  {
 		  	orientation=o;
 		  	dir=d;
 		  }  
 		  
-		  
+	  
 		  //methods 
 		  
 		  // method for setting the direction after getting the orientation
-		  public static Ship set_direction(Ship o)
+		  public static Text set_direction(Text o)
 		    {
 		    	switch(o.orientation)
 		    	{
@@ -84,7 +84,7 @@ public class Ship {
 		    }
 		   
 		   // turn left for instruction "L"
-		   public static Ship turn_left(Ship o)
+		   public static Text turn_left(Text o)
 			  {
 				  o.dir = (o.dir+1)%4;
 				  
@@ -92,7 +92,7 @@ public class Ship {
 			  }
 		   
 		   //turn right for instruction "R"
-		   public static Ship turn_right(Ship o)
+		   public static Text turn_right(Text o)
 			  {
 				  o.dir=(o.dir+3)%4;
 				  return o;
@@ -112,7 +112,7 @@ public class Ship {
 			  }
 		   
 		   //method for checking the "move-off" points
-		   public static boolean is_Blocked(Ship o)
+		   public static boolean is_Blocked(Text o)
 			  {
 				  if(G[o.posx][o.posy][o.dir]==1)
 				  {
@@ -125,7 +125,7 @@ public class Ship {
 			  
 		   
 		   //method for tracking the movement of the ship
-		    public static int move_forward(Ship obj)
+		    public static int move_forward(Text obj)
 		  {
 			  int x=-1;
 			  switch (obj.dir)
@@ -223,92 +223,112 @@ public class Ship {
 			
 		  }
 		  
-		  
-		  public static void main (String[] args) {
-				
-					Scanner sc=new Scanner(System.in); // for getting user input
-					int x1=0;
-					int y1=0;
-					char ori='\0';
-					int result=-1;
+	public static void main (String[] args) throws Exception  {
+		
+		int x1=0;
+		int y1=0;
+		
+		char ori='\0';
+		char out_orientation='\0';
+		int result=-1;
+		ArrayList<String>list=new ArrayList<String>();
+		
+	  //for reading the data from the text file.
+		
+		try(BufferedReader br = new BufferedReader(new FileReader("ship.txt"))) {
+	        StringBuilder sb = new StringBuilder();
+	        String line = br.readLine(); 
+
+	        while (line != null) {
+	            sb.append(line);
+	            sb.append(System.lineSeparator());
+	            list.add(line);
+	            line = br.readLine(); 
+	        }
+	        
+	        
+            int s= list.size();
+            String a=list.get(0);
+            
+            
+           char arr[]=a.replaceAll(" ","").toCharArray();
+           
+       
+           for(int i=0;i<arr.length-1;i++)
+            {
+        	 x=Character.getNumericValue(arr[i]); // top right coordinates of the grid.
+        	 y=Character.getNumericValue(arr[i+1]); // top right coordinates of the grid
+
+            }
+             grid=new int[x+1][y+1];
+		     G=new int[x+1][y+1][4];
+           
+          int i=1;
+          while(i<s)
+          {
+        	String str=list.get(i);
+        	
+        	char arr1[]=str.replaceAll(" ","").toCharArray();
+        	i++;
+        	
+        	ori=arr1[arr1.length-1];
+        	for(int j=0;j<arr1.length-2;j++)
+        	{
+        		x1=Character.getNumericValue(arr1[j]); //current position of the ship
+        		y1=Character.getNumericValue(arr1[j+1]); //current position of the ship
+        	}
+        	
+        	ship_instruction=list.get(i);
+        	i++;
+        	Text obj=new Text(ori,x1,y1,ori);
+			obj=set_direction(obj); // for setting the direction
+			len=ship_instruction.length();
+	        instruction=ship_instruction.toCharArray();
+	        for(int l=0;l<len;l++)
+			{
+				if(instruction[l]=='L')
+				{   
+					obj=turn_left(obj);
 					
-					//number of ships
-					System.out.println("please enter the number of ships you want to track");
-					int ship=sc.nextInt();
-					
-					// Grid coordinates
-					 System.out.println("Please enter the top right coordinates of the rectangular world");
-				     x=sc.nextInt();
-				     y=sc.nextInt();
-				     
-				     //grid initialization
-				     grid=new int[x+1][y+1];
-				     G=new int[x+1][y+1][4];
-				     
-				     // while loop for the tracking the number of ships
-					 while(t<ship)
-					  {
-						t++;
-						
-						// Number of ships and orientation
-						System.out.println("Please enter the current position followed by the orienation of the ship");
-						x1=sc.nextInt();
-						y1=sc.nextInt();
-						ori=sc.next().charAt(0); 
-						
-						// Ship instruction
-						System.out.println("Please enter the sequence of ship positions");
-						sc.nextLine();
-						ship_instruction=sc.nextLine();
-						len=ship_instruction.length();
-						instruction=ship_instruction.toCharArray();
-						
-						Ship obj=new Ship(ori,x1,y1,ori);
-						obj=set_direction(obj); // for setting the direction
-						
-					    char out_orientation='\0';
-						for(int i=0;i<len;i++)
-						{
-							if(instruction[i]=='L')
-							{   
-								obj=turn_left(obj);
-								
-							}
-							else if (instruction[i]=='R')
-							{
-								
-								obj=turn_right(obj);
-								
-							}
-							else if(instruction[i]=='F')
-							{
-							  result=move_forward(obj);
-							  if(result==0)
-							  {
-								  G[obj.posx][obj.posy][obj.dir]=1;
-								  break;
-							  }
-							  
-						     }	
-					  
-						}
-						
-						if(result==0)
-						{
-							out_orientation=set_orientation(obj.dir);
-							
-							System.out.println(obj.posx+" "+obj.posy+" "+out_orientation+" "+"LOST");
-							
-							 
-						}
-						else
-						{
-							out_orientation=set_orientation(obj.dir);
-							System.out.println(obj.posx+" "+obj.posy+" "+out_orientation);
-						}
-						
-					}
-						
 				}
-				
+				else if (instruction[l]=='R')
+				{
+					
+					obj=turn_right(obj);
+					
+				}
+				else if(instruction[l]=='F')
+				{
+				  result=move_forward(obj);
+				  if(result==0)
+				  {
+					  G[obj.posx][obj.posy][obj.dir]=1;
+					  break;
+				  }
+				  
+			     }	
+		  
 			}
+			
+			if(result==0)
+			{
+				out_orientation=set_orientation(obj.dir);
+				
+				System.out.println(obj.posx+" "+obj.posy+" "+out_orientation+" "+"LOST");
+				
+				 
+			}
+			else
+			{
+				out_orientation=set_orientation(obj.dir);
+				System.out.println(obj.posx+" "+obj.posy+" "+out_orientation);
+			}
+			
+			
+         }
+          
+		}
+			
+	}
+	
+}
